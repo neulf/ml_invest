@@ -1,3 +1,7 @@
+"""
+绘制混淆矩阵，能直观看出预测效果
+"""
+
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
