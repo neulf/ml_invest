@@ -21,12 +21,27 @@ pro = ts.pro_api("0da7a72463339b39f11671683c2c23a466b42c82ccae5a6aace10e6f")
 # df = pro.fut_mapping(ts_code='BB.DCE',trade_date="20200102")
 # print(df)
 
-def all_ts_to_db():
-    df = pro.fut_basic(exchange='DCE', fut_type='1', fields='ts_code,symbol,name,list_date,delist_date')
+def all_ts_to_db(exg, ifExists):
+    df = pro.fut_basic(exchange=exg, fut_type='1', fields='ts_code,symbol,name,list_date,delist_date')
 
     engine = create_engine("sqlite:///data/future_data.db")
-    df.to_sql('ts_base', engine)
+    df.to_sql('ts_base', engine, if_exists=ifExists)
     return
 
-all_ts_to_db()
+"""
+all_ts_to_db("DCE", "replace")
+all_ts_to_db("SHFE", "append")
+all_ts_to_db("CZCE", "append")
+all_ts_to_db("CFFEX", "append")
+all_ts_to_db("INE", "append")
+"""
+
+
+# 获取主力合约TF.CFX每日对应的月合约
+df = pro.fut_mapping(ts_code='TF.CFX', trade_date="20190123")
+print(df)
+
+df = pro.fut_basic(exchange="CFX", fut_type='1', fields='ts_code,symbol,name,list_date,delist_date')
+print(df)
+
 print("ok")
