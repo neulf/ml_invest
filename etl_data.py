@@ -21,7 +21,7 @@ def getcellbyname(headers, rows, colName):
 
 
 def getprodcodebyname(name):
-    code = "MA"
+    code = "-"
     return code
 
 
@@ -52,6 +52,8 @@ def data_to_db(filepath):
     # 数据库文件是test.db
     # 如果文件不存在，会自动在当前目录创建:
     conn = sqlite3.connect('data/future_data.db')
+    # 创建一个Cursor:
+    cursor: Cursor = conn.cursor()
 
     with open(filepath, encoding='utf-8-sig') as csvfile:
         reader = csv.reader(csvfile)
@@ -61,7 +63,7 @@ def data_to_db(filepath):
 
             if i > 0:
                 # 创建一个Cursor:
-                cursor: Cursor = conn.cursor()
+                # cursor: Cursor = conn.cursor()
 
                 # print(len(theader))
                 # print(getcellbyname(theader, rows, "商品名称"))
@@ -71,7 +73,7 @@ def data_to_db(filepath):
                     r"insert into predict_base_data (prod_code, prod_name_cn, p_date, p_str_date, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20) values ("
                     r"'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', "
                     r"'{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}') "
-                        .format(getprodcodebyname(getcellbyname(theader, rows, "商品名称")), getcellbyname(theader, rows, "商品名称"), time.strftime(r"%Y-%m-%d", tdate), strdate,
+                        .format(getcellbyname(theader, rows, "商品代码"), getcellbyname(theader, rows, "商品名称"), time.strftime(r"%Y-%m-%d", tdate), strdate,
                                 getcellbyname(theader, rows, predict_mapping["p1"]),
                                 getcellbyname(theader, rows, predict_mapping["p2"]),
                                 getcellbyname(theader, rows, predict_mapping["p3"]),
@@ -95,10 +97,10 @@ def data_to_db(filepath):
 
                 # 通过rowcount获得插入的行数:
                 # cursor.rowcount
-                # 关闭Cursor:
-                cursor.close()
-                # 提交事务:
-                conn.commit()
+    # 关闭Cursor:
+    cursor.close()
+    # 提交事务:
+    conn.commit()
 
     # 关闭Connection:
     conn.close()
@@ -123,6 +125,7 @@ def find_daily_record(begin_date):
     return
 
 
-# data_to_db("data/future20191231.csv")
-find_daily_record(datetime.date.today() - datetime.timedelta(days=6))
-# print(datetime.date.today() - datetime.timedelta(days = 6))
+if __name__ == "__main__":
+    # data_to_db("data/future20191231.csv")
+    find_daily_record(datetime.date.today() - datetime.timedelta(days=30))
+    # print(datetime.date.today() - datetime.timedelta(days = 6))

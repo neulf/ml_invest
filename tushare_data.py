@@ -28,20 +28,27 @@ def all_ts_to_db(exg, ifExists):
     df.to_sql('ts_base', engine, if_exists=ifExists)
     return
 
-"""
-all_ts_to_db("DCE", "replace")
-all_ts_to_db("SHFE", "append")
-all_ts_to_db("CZCE", "append")
-all_ts_to_db("CFFEX", "append")
-all_ts_to_db("INE", "append")
-"""
+
+if __name__ == "__main__":
+    """
+    all_ts_to_db("DCE", "replace")
+    all_ts_to_db("SHFE", "append")
+    all_ts_to_db("CZCE", "append")
+    all_ts_to_db("CFFEX", "append")
+    all_ts_to_db("INE", "append")
+    """
 
 
-# 获取主力合约TF.CFX每日对应的月合约
-df = pro.fut_mapping(ts_code='TF.CFX', trade_date="20190123")
-print(df)
+    # 获取主力合约TF.CFX每日对应的月合约
+    # df = pro.fut_mapping(ts_code='TF.CFX', trade_date="20190123")
+    # print(df)
 
-df = pro.fut_basic(exchange="CFX", fut_type='1', fields='ts_code,symbol,name,list_date,delist_date')
-print(df)
+    # df = pro.fut_basic(exchange="CFX", fut_type='1', fields='ts_code,symbol,name,list_date,delist_date')
+    # print(df)
 
-print("ok")
+    df = pro.fut_holding(trade_date='20181113', symbol='MA', exchange='CZCE')
+    print(df)
+
+    print(df.size)
+
+    print("ok")
