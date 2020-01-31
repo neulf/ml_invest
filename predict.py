@@ -34,9 +34,9 @@ def get_input_data(prod_code, start_date, end_date):
                                params={"prod_code":prod_code,"dstart":start_date,"dfinish":end_date})
 
     # params={"dstart":datetime(2014,6,24,16,0),"dfinish":datetime(2014,6,24,17,0)}
-    print(df.values)
+    # print(df.values)
     arr_label = [i for item in df_label.values for i in item]
-    print(arr_label)
+    # print(arr_label)
 
     return (df.values, arr_label)
 
@@ -78,14 +78,14 @@ def predict(prod_code, start_date, end_date, pred_start_date, pred_end_date):
     clf = classify(features_train,labels_train)
     op = clf.predict(pred_data[0])
 
-    if type(op) is np.ndarray:
+    if op.size > 1:
         print("推荐操作:操作集合")
     else:
-        if op == 0:
+        if op == -1:
             op_display="空"
-        elif op == 1:
+        elif op == 0:
             op_display = "闲"
-        elif op == 2:
+        elif op == 1:
             op_display = "多"
         else:
             op_display = "未知"
@@ -95,4 +95,4 @@ def predict(prod_code, start_date, end_date, pred_start_date, pred_end_date):
 
 if __name__ == "__main__":
     # predict()
-    predict("RB.SHF","20191231","20200103","20200102","20200110")
+    predict("RB.SHF","20191231","20200103","20200103","20200110")

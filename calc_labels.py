@@ -85,7 +85,7 @@ def CalcOp(cursor, prod_code, trade_date, ts_code, quotations, prods):
     # 做空下单价（暂定比最低价高一个价格变动单位）
     brear_order_price = quotations.iloc[0].loc["low"] + min_moveup
 
-    op = "1" # 闲
+    op = "0" # 闲
     out_flag = 0
     earnings = 0
     for i in range(quotations.shape[0]):
@@ -99,7 +99,7 @@ def CalcOp(cursor, prod_code, trade_date, ts_code, quotations, prods):
         if i > 0:
             if (quotations.iloc[i].loc["high"] - bull_order_price) / min_moveup >= winPoint:
                 # 多止盈
-                op = "2" # 多
+                op = "1" # 多
                 # 止盈价
                 win_price = bull_order_price + winPoint * min_moveup
                 print("下单价:{0},多止盈价：{1} 下单时间:{2},下单操作:{3}".format(bull_order_price, win_price, trade_date, op))
@@ -109,7 +109,7 @@ def CalcOp(cursor, prod_code, trade_date, ts_code, quotations, prods):
 
             if (brear_order_price - quotations.iloc[i].loc["low"]) / min_moveup >= winPoint:
                 # 空止盈
-                op = "0" # 空
+                op = "-1" # 空
                 # 止盈价
                 win_price = brear_order_price - winPoint * min_moveup
                 print("下单价:{0},空止盈价：{1} 下单时间:{2},下单操作:{3}".format(brear_order_price, win_price, trade_date, op))
