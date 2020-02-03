@@ -152,7 +152,7 @@ def GetWinLossPoints():
     return
 
 if __name__ == "__main__":
-    PreCalc("RB.SHF", "20190120", "20200220")
+    PreCalc("RB.SHF", "20191230", "20200220")
     # df = GetProdInfos()
     # print(df.loc[df.full_prod_code == "RB.SHF", "win_point"].iloc[0])
 

@@ -8,7 +8,14 @@ import sqlite3
 import datetime
 import time
 from sqlite3 import Cursor
+import tushare as ts
+from string import digits
+import re
+import pandas as pd
 
+from calc_labels import GetProdInfos
+
+pro = ts.pro_api("0da7a72463339b39f11671683c2c23a466b42c82ccae5a6aace10e6f")
 
 def getcellbyname(headers, rows, colName):
     for i in range(0, len(headers)):
@@ -24,6 +31,43 @@ def getprodcodebyname(name):
     code = "-"
     return code
 
+def fill_db(start_date="", end_date="", exchange="", ts_code=""):
+    prods = GetProdInfos()
+
+    df = pro.fut_daily(start_date=start_date, end_date = end_date, exchange=exchange, ts_code=ts_code,
+                       fields="ts_code,trade_date,pre_close,pre_settle,open,high,low,close,settle,vol")
+
+    conn = sqlite3.connect('data/future_data.db')
+    # 创建一个Cursor:
+    cursor: Cursor = conn.cursor()
+
+    # print(df)
+    for i in range(df.shape[0]):
+        # print(df.iloc[i].loc["trade_date"])
+        sql = "insert into predict_base_data(prod_code, prod_name_cn, p_date, p_str_date,op_ts_code) values (?,?,?,?,?)"
+        pstr_date = df.iloc[i].loc["trade_date"]
+        p_date = datetime.datetime.strptime(pstr_date, "%Y%m%d").strftime("%Y-%m-%d")
+        ts_code = df.iloc[i].loc["ts_code"]
+        # print(ts_code)
+
+        # prod_code= ""
+        if bool(re.search(r'\d{4}', ts_code)) :
+            continue
+
+        prod_code = ts_code
+
+        if prods.loc[prods.full_prod_code == ts_code,"prod_name"].size == 0:
+            continue
+
+        prod_name_cn = prods.loc[prods.full_prod_code == prod_code, "prod_name"].iloc[0]
+        # print(prod_name_cn)
+
+        cursor.execute(sql,(prod_code,prod_name_cn,p_date,pstr_date,ts_code))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return
 
 def data_to_db(filepath):
     # 青松,黑金期货,试错交易,灰天鹅,未来航情,晨先财经,云数据,逍遥论期,立鹤论期
@@ -128,8 +172,43 @@ def find_daily_record(begin_date):
 
     return
 
+def xxx():
+    # 连接到SQlite数据库
+    conn = sqlite3.connect("data/future_data.db")
+    # 创建一个cursor：
+    cursor = conn.cursor()
+    # 执行查询语句：
+
+    if prod_code == "":
+        df = pd.read_sql_query("select full_prod_code from prod_base where p_str_date>=:dstart and p_str_date<=:dfinish",
+                               conn,
+                               params={"dstart":start_date,"dfinish":end_date},
+                               index_col="prod_code")
+
+        df_label = pd.read_sql_query("select true_op from predict_base_data where p_str_date>=:dstart and p_str_date<=:dfinish",
+                               conn,
+                               params={"dstart":start_date,"dfinish":end_date})
+    else:
+        df = pd.read_sql_query("select p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20 from predict_base_data where prod_code = :prod_code and p_str_date>=:dstart and p_str_date<=:dfinish",
+                               conn,
+                               params={"prod_code":prod_code,"dstart":start_date,"dfinish":end_date})
+
+        df_label = pd.read_sql_query("select true_op from predict_base_data where prod_code = :prod_code and p_str_date>=:dstart and p_str_date<=:dfinish",
+                               conn,
+                               params={"prod_code":prod_code,"dstart":start_date,"dfinish":end_date})
+    return
+
+def test():
+    df = pro.fut_daily(start_date="20190101", end_date = "20191231", ts_code="RB.SHF",
+                       fields="ts_code,trade_date,pre_close,pre_settle,open,high,low,close,settle,vol")
+
+    print(df)
+
+    print(bool(re.search(r'\d{4}', "RB2051.SHF")))
+    return
 
 if __name__ == "__main__":
     # data_to_db("data/future20191231.csv")
-    find_daily_record(datetime.datetime.strptime("20191231","%Y%m%d"))
-    # print(datetime.date.today() - datetime.timedelta(days = 6))
+    # find_daily_record(datetime.datetime.strptime("20200101","%Y%m%d"))
+    fill_db(start_date="20180101", end_date="20181231", ts_code="RB.SHF")
+    # test()

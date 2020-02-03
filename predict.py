@@ -95,4 +95,4 @@ def predict(prod_code, start_date, end_date, pred_start_date, pred_end_date):
 
 if __name__ == "__main__":
     # predict()
-    predict("RB.SHF","20191231","20200103","20200103","20200110")
+    predict("RB.SHF","20191201","20200102","20200103","20200103")
