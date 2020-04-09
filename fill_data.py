@@ -172,30 +172,22 @@ def find_daily_record(begin_date):
 
     return
 
-def xxx():
+def fill_all_data(start_date="", end_date=""):
     # 连接到SQlite数据库
     conn = sqlite3.connect("data/future_data.db")
     # 创建一个cursor：
     cursor = conn.cursor()
     # 执行查询语句：
+    df = pd.read_sql_query("select full_prod_code from prod_base",
+                           conn)
+    conn.close()
 
-    if prod_code == "":
-        df = pd.read_sql_query("select full_prod_code from prod_base where p_str_date>=:dstart and p_str_date<=:dfinish",
-                               conn,
-                               params={"dstart":start_date,"dfinish":end_date},
-                               index_col="prod_code")
+    for i in range(df.shape[0]):
+        print(df.iloc[i][0])
+        fill_db(start_date = start_date, end_date = end_date, ts_code = df.iloc[i][0])
+        time.sleep(0.1)
+        print("休息0.1秒")
 
-        df_label = pd.read_sql_query("select true_op from predict_base_data where p_str_date>=:dstart and p_str_date<=:dfinish",
-                               conn,
-                               params={"dstart":start_date,"dfinish":end_date})
-    else:
-        df = pd.read_sql_query("select p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20 from predict_base_data where prod_code = :prod_code and p_str_date>=:dstart and p_str_date<=:dfinish",
-                               conn,
-                               params={"prod_code":prod_code,"dstart":start_date,"dfinish":end_date})
-
-        df_label = pd.read_sql_query("select true_op from predict_base_data where prod_code = :prod_code and p_str_date>=:dstart and p_str_date<=:dfinish",
-                               conn,
-                               params={"prod_code":prod_code,"dstart":start_date,"dfinish":end_date})
     return
 
 def test():
@@ -210,5 +202,7 @@ def test():
 if __name__ == "__main__":
     # data_to_db("data/future20191231.csv")
     # find_daily_record(datetime.datetime.strptime("20200101","%Y%m%d"))
-    fill_db(start_date="20180101", end_date="20181231", ts_code="RB.SHF")
+    # fill_db(start_date="20180101", end_date="20181231", ts_code="CJ.ZCE")
+
+    fill_all_data(start_date="20200204", end_date="20200229")
     # test()

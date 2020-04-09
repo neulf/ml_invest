@@ -61,6 +61,7 @@ def valid(prod_code, start_date, end_date, test_start_date, test_end_date):
     X_test = features_test
     y_test = labels_test
     cls = classify(features_train, labels_train)
+
     print('Traing score : %.2f' % cls.score(X_train, y_train))
     print('Testing score : %.2f' % cls.score(X_test, y_test))
     return
