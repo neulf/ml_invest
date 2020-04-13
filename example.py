@@ -41,15 +41,15 @@ if __name__ == '__main__':
     # 提币 （20次/2s）
     # result = accountAPI.coin_withdraw('XRP', 1, 4, '', "", 0.0005)
     # 账单流水查询 （可查询最近一个月）（20次/2s）
-    # result = accountAPI.get_ledger_record()
+    result = accountAPI.get_ledger_record()
     # 获取充值地址 （20次/2s）
     # result = accountAPI.get_top_up_address('usdt')
     # 获取账户资产估值 （1次/20s）
-    result = accountAPI.get_asset_valuation(valuation_currency="USD")
+    # result = accountAPI.get_asset_valuation(valuation_currency="USD")
 
     print(time + json.dumps(result))
     logging.info("result:" + json.dumps(result))
-    print("账户资产估值：" + str(result["balance"]))
+    #print("账户资产估值：" + str(result["balance"]))
 
     # 获取子账户余额信息 （1次/20s）
     # result = accountAPI.get_sub_account('')

@@ -6,9 +6,13 @@ def DateAddDays(strDate, days):
 
     return tdate.strftime("%Y%m%d")
 
-def GetNowDate():
+def now_date():
     now_date = datetime.datetime.now().strftime("%Y%m%d")
     return now_date
+
+def now_datetime():
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return now
 
 if __name__ == "__main__":
     print(DateAddDays("20200126", -10))

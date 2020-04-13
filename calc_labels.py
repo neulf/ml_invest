@@ -8,7 +8,7 @@ from sqlite3 import Cursor
 import tushare as ts
 import pandas as pd
 
-from time_untils import DateAddDays, GetNowDate
+from time_untils import DateAddDays, now_date
 
 pro = ts.pro_api("0da7a72463339b39f11671683c2c23a466b42c82ccae5a6aace10e6f")
 
@@ -27,7 +27,7 @@ def GetProdInfos():
 
 # 计算准备
 def PreCalc(prod_code, start_date, end_date):
-    if DateAddDays(start_date,watch_days) > GetNowDate():
+    if DateAddDays(start_date,watch_days) > now_date():
         print("日期超过了最大处理时间")
         return
 
